@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background: #4CAF50;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+main {
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+form {
+    margin: 20px 0;
+}
+
+label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input[type="date"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+button {
+    background: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #45a049;
+}
+
+.tracker, .resources, .contact {
+    margin-bottom: 30px;
+}
+
+#score-display {
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+#quick-tips ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#quick-tips li {
+    background: #f4f4f4;
+    margin: 5px 0;
+    padding: 10px;
+}
+
+#faq p {
+    margin: 10px 0;
+}
+
+footer {
+    background: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
