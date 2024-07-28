@@ -190,6 +190,8 @@
       </div>
     </div>
   </section>
+
+
   <!-- Resources Section -->
   <section id="resources">
     <div class="container">
@@ -211,31 +213,39 @@
       </ul>
     </div>
   </section>
+
+
   <!-- Contact Section -->
   <section id="contact">
     <div class="container">
       <div class="row">
         <div class="col-md-12 text-center">
-          <h2 class="section-title">Contact Us</h2>
+          <h3 class="section-title">Leave us some feedback!</h3>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <div class="background-box">
-            <form>
+
+            <form id="contactForm" action="https://formspree.io/f/xwpelqqw" method="POST">
+              <input type="hidden" name="_cc" value="ydolkarj@gmail.com">
+              <input type="hidden" name="_cc" value="rbah@macalester.edu">
+              <input type="hidden" name="_cc" value="wacostal@macalester.edu">
+
+
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="name">Name</label>
-                  <input type="text" class="form-control" id="name" placeholder="Enter your name">
+                  <input type="text" class="form-control" id="name" name="Name" placeholder="Enter your name" required>
                 </div>
-                <div class="form-group col-md-6">
+                <!-- <div class="form-group col-md-6">
                   <label for="email">Email</label>
-                  <input type="email" class="form-control" id="email" placeholder="Enter your email">
-                </div>
+                  <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
+                </div> -->
               </div>
               <div class="form-group">
                 <label for="message">Message</label>
-                <textarea class="form-control" id="message" rows="5" placeholder="Enter your message"></textarea>
+                <textarea class="form-control" id="message" name="Message" rows="5" placeholder="Enter your message" required></textarea>
               </div>
               <button type="submit" class="btn btn-primary">Send</button>
             </form>
@@ -244,56 +254,119 @@
       </div>
     </div>
   </section>
+
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      var contactForm = document.getElementById('contactForm');
+  
+      contactForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+  
+        var formData = new FormData(contactForm);
+  
+        fetch(contactForm.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json'
+          }
+        }).then(response => {
+          if (response.ok) {
+            alert('Thank you for your message. It has been sent.');
+            contactForm.reset();
+          } else {
+            response.json().then(data => {
+              if (Object.hasOwn(data, 'errors')) {
+                alert(data["errors"].map(error => error["message"]).join(", "));
+              } else {
+                alert('Oops! There was a problem submitting your form.');
+              }
+            });
+          }
+        }).catch(error => {
+          alert('Oops! There was a problem submitting your form.');
+        });
+      });
+    });
+  </script>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var consumptionTypeSelect = document.getElementById('consumptionType');
       var measurementTypeSelect = document.getElementById('measurementType');
       var waterInputGroup = document.getElementById('waterInputGroup');
       var timeInputGroup = document.getElementById('timeInputGroup');
+      var waterConsumedLabel = document.querySelector('label[for="waterConsumed"]');
+      var waterConsumedInput = document.getElementById('waterConsumed');
       var form = document.getElementById('waterIntakeForm');
       var usageScoreDisplay = document.getElementById('usageScore');
       var scoreExplanationDisplay = document.getElementById('scoreExplanation');
+  
+      consumptionTypeSelect.addEventListener('change', function () {
+        if (this.value === 'drinking') {
+          measurementTypeSelect.value = 'gallons';
+          waterConsumedLabel.textContent = 'Total Cups Consumed';
+          waterConsumedInput.placeholder = 'Enter cups';
+          waterInputGroup.style.display = 'block';
+          timeInputGroup.style.display = 'none';
+        } else {
+          measurementTypeSelect.value = 'minutes';
+          waterConsumedLabel.textContent = 'Total Time Spent (minutes)';
+          waterConsumedInput.placeholder = 'Enter minutes';
+          waterInputGroup.style.display = 'none';
+          timeInputGroup.style.display = 'block';
+        }
+      });
+  
       measurementTypeSelect.addEventListener('change', function () {
         if (this.value === 'minutes') {
+          waterConsumedLabel.textContent = 'Total Time Spent (minutes)';
+          waterConsumedInput.placeholder = 'Enter minutes';
           waterInputGroup.style.display = 'none';
           timeInputGroup.style.display = 'block';
         } else {
+          waterConsumedLabel.textContent = 'Total Cups Consumed';
+          waterConsumedInput.placeholder = 'Enter cups';
           waterInputGroup.style.display = 'block';
           timeInputGroup.style.display = 'none';
         }
       });
+  
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        var consumptionType = document.getElementById('consumptionType').value;
+        var consumptionType = consumptionTypeSelect.value;
         var measurementType = measurementTypeSelect.value;
-        var waterConsumed = document.getElementById('waterConsumed').value;
-        var timeSpent = document.getElementById('timeSpent').value;
-
+        var waterConsumed = parseFloat(document.getElementById('waterConsumed').value) || 0;
+        var timeSpent = parseFloat(document.getElementById('timeSpent').value) || 0;
+  
         var usageScore;
-        var totalWaterUsed =0;
-        if(measurementType==='minutes'){
-          if (consumptionType==='showering'){
-            totalWaterUsed=timeSpent*2.3;
-          } else if(consumptionType=== 'washing_dishes'){
-            totalWaterUsed=timeSpent*0.422;
+        var totalWaterUsed = 0;
+  
+        if (measurementType === 'minutes') {
+          if (consumptionType === 'showering') {
+            totalWaterUsed = timeSpent * 2.3;
+          } else if (consumptionType === 'washing_dishes') {
+            totalWaterUsed = timeSpent * 0.422;
           }
-          usageScore=calculateUsageScore(consumptionType,totalWaterUsed,true);
-        } else{
-          totalWaterUsed=waterConsumed;
-          usageScore=calculateUsageScore(consumptionType,waterConsumed);
+        } else {
+          totalWaterUsed = waterConsumed * 0.0625; // Convert cups to gallons
         }
-        usageScoreDisplay.textContent='Total Water Used: ' + totalWaterUsed.toFixed(2)+' gallons';
-        scoreExplanationDisplay.textContent=getScoreExplanation(usageScore);
+  
+        usageScore = calculateUsageScore(consumptionType, totalWaterUsed, measurementType === 'minutes');
+        usageScoreDisplay.textContent = 'Total Water Used: ' + totalWaterUsed.toFixed(2) + ' gallons';
+        scoreExplanationDisplay.textContent = getScoreExplanation(usageScore);
       });
-
-function calculateUsageScore(type, amount, isTime = false) {
-var score;
+  
+      function calculateUsageScore(type, amount, isTime = false) {
+        var score;
         if (isTime) {
           switch (type) {
             case 'showering':
-              score = amount <= 5 ? 10 : amount <= 10 ? 8 : 6;
+              score = amount <= 11.5 ? 10 : amount <= 23 ? 8 : 6;
               break;
             case 'washing_dishes':
-              score = amount <= 10 ? 10 : amount <= 20 ? 8 : 6;
+              score = amount <= 10.55 ? 10 : amount <= 21.1 ? 8 : 6;
               break;
             default:
               score = 0;
@@ -301,18 +374,12 @@ var score;
         } else {
           switch (type) {
             case 'drinking':
-              score = amount <= 1 ? 10 : amount <= 2 ? 8 : 6;
+              score = amount <= 0.625 ? 10 : amount <= 1.25 ? 8 : 6;
               break;
-            // case 'cooking':
-            //   score = amount <= 2 ? 10 : amount <= 4 ? 8 : 6;
-            //   break;
-            // case 'cleaning':
-            //   score = amount <= 3 ? 10 : amount <= 5 ? 8 : 6;
-            //   break;
             case 'showering':
               score = amount <= 10 ? 10 : amount <= 20 ? 8 : 6;
               break;
-              case 'washing_dishes':
+            case 'washing_dishes':
               score = amount <= 5 ? 10 : amount <= 10 ? 8 : 6;
               break;
             default:
@@ -321,6 +388,7 @@ var score;
         }
         return score;
       }
+  
       function getScoreExplanation(score) {
         switch (score) {
           case 10:
@@ -335,5 +403,7 @@ var score;
       }
     });
   </script>
+  
+
 </body>
 </html>
