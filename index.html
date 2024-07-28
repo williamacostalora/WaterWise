@@ -154,11 +154,11 @@
                   </select>
                 </div>
                 <div class="form-group col-md-6" id="waterInputGroup">
-                  <label for="waterConsumed">Total Water Consumed (cups)</label>
+                  <label for="waterConsumed">Total Cups Consumed</label>
                   <input type="number" class="form-control" id="waterConsumed" placeholder="Enter cups">
                 </div>
                 <div class="form-group col-md-6" id="timeInputGroup" style="display: none;">
-                  <label for="timeSpent">Time Spent (minutes)</label>
+                  <label for="timeSpent">Total Minutes Spent</label>
                   <input type="number" class="form-control" id="timeSpent" placeholder="Enter minutes">
                 </div>
               </div>
@@ -167,7 +167,7 @@
 
             <!-- Water Usage Score Display -->
             <div class="my-5">
-              <h2>Your Water Usage Score</h2>
+              <h2>Your Water Usage Score (gallons)</h2>
               <p id="usageScore" class="score">Your score will appear here</p>
               <p id="scoreExplanation"></p>
             </div>
@@ -275,14 +275,30 @@
         var timeSpent = document.getElementById('timeSpent').value;
 
         var usageScore;
-        if (measurementType === 'gallons') {
-          usageScore = calculateUsageScore(consumptionType, waterConsumed);
-        } else {
-          usageScore = calculateUsageScore(consumptionType, timeSpent, true);
+        var totalWaterUsed =0;
+        if(measurementType==='minutes'){
+          if (consumptionType==='showering'){
+            totalWaterUsed=timeSpent*2.3;
+          } else if(consumptionType=== 'washing_dishes'){
+            totalWaterUsed=timeSpent*0.422;
+          }
+          usageScore=calculateUsageScore(consumptionType,totalWaterUsed,true);
+        } else{
+          totalWaterUsed=waterConsumed;
+          usageScore=calculateUsageScore(consumptionType,waterConsumed);
         }
 
-        usageScoreDisplay.textContent = usageScore;
-        scoreExplanationDisplay.textContent = getScoreExplanation(usageScore);
+        usageScoreDisplay.textContent='Total Water Used: ' + totalWaterUsed.toFixed(2)+' gallons';
+        scoreExplanationDisplay.textContent=getScoreExplanation(usageScore);
+
+      //   if (measurementType === 'gallons') {
+      //     usageScore = calculateUsageScore(consumptionType, waterConsumed);
+      //   } else {
+      //     usageScore = calculateUsageScore(consumptionType, timeSpent, true);
+      //   }
+
+      //   usageScoreDisplay.textContent = usageScore;
+      //   scoreExplanationDisplay.textContent = getScoreExplanation(usageScore);
       });
 
       function calculateUsageScore(type, amount, isTime = false) {
@@ -303,12 +319,12 @@
             case 'drinking':
               score = amount <= 1 ? 10 : amount <= 2 ? 8 : 6;
               break;
-            case 'cooking':
-              score = amount <= 2 ? 10 : amount <= 4 ? 8 : 6;
-              break;
-            case 'cleaning':
-              score = amount <= 3 ? 10 : amount <= 5 ? 8 : 6;
-              break;
+            // case 'cooking':
+            //   score = amount <= 2 ? 10 : amount <= 4 ? 8 : 6;
+            //   break;
+            // case 'cleaning':
+            //   score = amount <= 3 ? 10 : amount <= 5 ? 8 : 6;
+            //   break;
             case 'showering':
               score = amount <= 10 ? 10 : amount <= 20 ? 8 : 6;
               break;
