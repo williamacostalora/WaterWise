@@ -14,6 +14,7 @@
       font-family: 'Roboto', sans-serif;
       padding-top: 56px;
       background-color: #f0f8ff;
+      color: #333;
     }
     .navbar {
       background-color: #004080;
@@ -21,17 +22,20 @@
     .navbar-brand, .nav-link {
       color: #fff !important;
     }
+    .navbar-brand:hover, .nav-link:hover {
+      color: #cce0ff !important;
+    }
     section {
       padding: 60px 0;
     }
     #home {
-      background-color: #e6f2ff;
-    }
-    #resources {
       background-color: #cce0ff;
     }
+    #resources {
+      background-color: #99ccff;
+    }
     #contact {
-      background-color: #b3ccff;
+      background-color: #66b2ff;
     }
     .score {
       font-size: 2em;
@@ -49,7 +53,7 @@
       padding-left: 0;
     }
     .quick-tips ul li {
-      background: #0066cc;
+      background: #004080;
       color: #fff;
       padding: 10px;
       margin: 5px 0;
@@ -72,6 +76,13 @@
     .form-control:focus {
       border-color: #004080;
       box-shadow: none;
+    }
+    .calculator-container, .background-box {
+      background: #e6f2ff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
   </style>
 </head>
@@ -99,62 +110,84 @@
   </nav>
 
   <!-- Home Section -->
-  <section id="home" class="text-center">
+  <section id="home">
     <div class="container">
-      <h1 class="section-title">Welcome to WaterWise</h1>
-      <p>Track your daily water consumption and learn how to conserve water efficiently!</p>
-
-      <!-- Image placeholder -->
-      <img src="https://via.placeholder.com/800x400" class="img-fluid my-4" alt="Water Conservation">
-
-      <!-- Daily Water Intake Tracker Form -->
-      <h2>Track Your Water Intake</h2>
-      <form id="waterIntakeForm">
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="date">Date</label>
-            <input type="date" class="form-control" id="date" required>
-          </div>
-          <div class="form-group col-md4">
-            <label for="waterConsumed">Total Water Consumed (gallons)</label>
-            <input type="number" class="form-control" id="waterConsumed" placeholder="Enter gallons">
-          </div>
-          <div class="form-group col-md-4">
-            <label for="consumptionType">Type of Consumption</label>
-            <select class="form-control" id="consumptionType">
-              <option selected>Select type</option>
-              <option value="drinking">Drinking</option>
-              <option value="cooking">Cooking</option>
-              <option value="cleaning">Cleaning</option>
-              <option value="showering">Showering</option>
-              <option value="washing_dishes">Washing Dishes</option>
-            </select>
-          </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h1 class="section-title">Welcome to WaterWise</h1>
+          <p class="background-box">Track your daily water consumption and learn how to conserve water efficiently!</p>
         </div>
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="timeSpent">Time Spent (minutes)</label>
-            <input type="number" class="form-control" id="timeSpent" placeholder="Enter minutes">
-          </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-      </form>
-
-      <!-- Water Usage Score Display -->
-      <div class="my-5">
-        <h2>Your Water Usage Score</h2>
-        <p id="usageScore" class="score">Your score will appear here</p>
-        <p id="scoreExplanation"></p>
       </div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <img src="https://via.placeholder.com/800x400" class="img-fluid my-4" alt="Water Conservation">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="calculator-container">
+            <h2>Track Your Water Intake</h2>
+            <form id="waterIntakeForm">
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="date">Date</label>
+                  <input type="date" class="form-control" id="date" required>
+                </div>
+                <div class="form-group col-md6">
+                  <label for="consumptionType">Type of Consumption</label>
+                  <select class="form-control" id="consumptionType">
+                    <option selected>Select type</option>
+                    <option value="drinking">Drinking</option>
+                    <option value="cooking">Cooking</option>
+                    <option value="cleaning">Cleaning</option>
+                    <option value="showering">Showering</option>
+                    <option value="washing_dishes">Washing Dishes</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="measurementType">Measurement Type</label>
+                  <select class="form-control" id="measurementType">
+                    <option value="gallons">Gallons</option>
+                    <option value="minutes">Minutes</option>
+                  </select>
+                </div>
+                <div class="form-group col-md-6" id="waterInputGroup">
+                  <label for="waterConsumed">Total Water Consumed (gallons)</label>
+                  <input type="number" class="form-control" id="waterConsumed" placeholder="Enter gallons">
+                </div>
+                <div class="form-group col-md-6" id="timeInputGroup" style="display: none;">
+                  <label for="timeSpent">Time Spent (minutes)</label>
+                  <input type="number" class="form-control" id="timeSpent" placeholder="Enter minutes">
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
 
-      <!-- Quick Tips for Responsible Water Use -->
-      <div class="quick-tips">
-        <h3>Quick Tips for Water Conservation</h3>
-        <ul>
-          <li>Take shorter showers.</li>
-          <li>Fix leaks in faucets and toilets.</li>
-          <li>Use a broom instead of a hose to clean driveways.</li>
-        </ul>
+            <!-- Water Usage Score Display -->
+            <div class="my-5">
+              <h2>Your Water Usage Score</h2>
+              <p id="usageScore" class="score">Your score will appear here</p>
+              <p id="scoreExplanation"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="background-box">
+            <h3>Quick Tips for Water Conservation</h3>
+            <ul class="quick-tips">
+              <li>Take shorter showers - aim for 5 minutes or less.</li>
+              <li>Fix leaks in faucets and toilets promptly to avoid wasting water.</li>
+              <li>Use a broom instead of a hose to clean driveways and sidewalks.</li>
+              <li>Collect rainwater for watering plants and gardens.</li>
+              <li>Install water-saving showerheads and faucet aerators.</li>
+              <li>Run dishwashers and washing machines only with full loads.</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -162,71 +195,164 @@
   <!-- Resources Section -->
   <section id="resources">
     <div class="container">
-      <h2 class="section-title text-center">Resources</h2>
-      <h3>Articles on Water Conservation</h3>
-      <ul class="resource-links">
-        <li><a href="#">How to Save Water at Home</a></li>
-        <li><a href="#">The Importance of Water Conservation</a></li>
-      </ul>
-      <h3>Interactive Tools</h3>
-      <ul class="resource-links">
-        <li><a href="#">Water Calculator</a></li>
-        <li><a href="#">Conservation Tips Quiz</a></li>
-      </ul>
-      <h3>External Links</h3>
-      <ul class="resource-links">
-        <li><a href="https://www.epa.gov/watersense">EPA WaterSense</a></li>
-        <li><a href="https://www.worldwildlife.org/initiatives/freshwater">WWF Water Conservation</a></li>
-      </ul>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2 class="section-title">Resources</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="background-box">
+            <h3>Articles on Water Conservation</h3>
+            <ul class="resource-links">
+              <li><a href="#">How to Save Water at Home</a></li>
+              <li><a href="#">The Importance of Water Conservation</a></li>
+            </ul>
+          </div>
+          <div class="background-box">
+            <h3>Interactive Tools</h3>
+            <ul class="resource-links">
+              <li><a href="#">Water Calculator</a></li>
+              <li><a href="#">Conservation Tips Quiz</a></li>
+            </ul>
+          </div>
+          <div class="background-box">
+            <h3>External Links</h3>
+            <ul class="resource-links">
+              <li><a href="https://www.epa.gov/watersense">EPA WaterSense</a></li>
+              <li><a href="https://www.worldwildlife.org/initiatives/freshwater">WWF Water Conservation</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </section>
+
+  <!-- Contact Section -->
+  <section id="contact">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2 class="section-title">Contact Us</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="background-box">
+            <form>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="name">Name</label>
+                  <input type="text" class="form-control" id="name" placeholder="Enter your name">
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="email">Email</label>
+                  <input type="email" class="form-control" id="email" placeholder="Enter your email">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="message">Message</label>
+                <textarea class="form-control" id="message" rows="5" placeholder="Enter your message"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Contact and Support Section -->
-
   <script>
-    document.getElementById('waterIntakeForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const waterConsumed = document.getElementById('waterConsumed').value;
-      const timeSpent = document.getElementById('timeSpent').value;
-      const consumptionType = document.getElementById('consumptionType').value;
-      
-      calculateScore(waterConsumed, timeSpent, consumptionType);
+    document.addEventListener('DOMContentLoaded', function () {
+      var measurementTypeSelect = document.getElementById('measurementType');
+      var waterInputGroup = document.getElementById('waterInputGroup');
+      var timeInputGroup = document.getElementById('timeInputGroup');
+      var form = document.getElementById('waterIntakeForm');
+      var usageScoreDisplay = document.getElementById('usageScore');
+      var scoreExplanationDisplay = document.getElementById('scoreExplanation');
+
+      measurementTypeSelect.addEventListener('change', function () {
+        if (this.value === 'minutes') {
+          waterInputGroup.style.display = 'none';
+          timeInputGroup.style.display = 'block';
+        } else {
+          waterInputGroup.style.display = 'block';
+          timeInputGroup.style.display = 'none';
+        }
+      });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var consumptionType = document.getElementById('consumptionType').value;
+        var measurementType = measurementTypeSelect.value;
+        var waterConsumed = document.getElementById('waterConsumed').value;
+        var timeSpent = document.getElementById('timeSpent').value;
+
+        var usageScore;
+        if (measurementType === 'gallons') {
+          usageScore = calculateUsageScore(consumptionType, waterConsumed);
+        } else {
+          usageScore = calculateUsageScore(consumptionType, timeSpent, true);
+        }
+
+        usageScoreDisplay.textContent = usageScore;
+        scoreExplanationDisplay.textContent = getScoreExplanation(usageScore);
+      });
+
+      function calculateUsageScore(type, amount, isTime = false) {
+        var score;
+        if (isTime) {
+          switch (type) {
+            case 'showering':
+              score = amount <= 5 ? 10 : amount <= 10 ? 8 : 6;
+              break;
+            case 'washing_dishes':
+              score = amount <= 10 ? 10 : amount <= 20 ? 8 : 6;
+              break;
+            default:
+              score = 0;
+          }
+        } else {
+          switch (type) {
+            case 'drinking':
+              score = amount <= 1 ? 10 : amount <= 2 ? 8 : 6;
+              break;
+            case 'cooking':
+              score = amount <= 2 ? 10 : amount <= 4 ? 8 : 6;
+              break;
+            case 'cleaning':
+              score = amount <= 3 ? 10 : amount <= 5 ? 8 : 6;
+              break;
+            case 'showering':
+              score = amount <= 10 ? 10 : amount <= 20 ? 8 : 6;
+              break;
+            case 'washing_dishes':
+              score = amount <= 5 ? 10 : amount <= 10 ? 8 : 6;
+              break;
+            default:
+              score = 0;
+          }
+        }
+        return score;
+      }
+
+      function getScoreExplanation(score) {
+        switch (score) {
+          case 10:
+            return 'Excellent! You are a water-saving champion.';
+          case 8:
+            return 'Good job! You are using water wisely.';
+          case 6:
+            return 'Not bad, but there is room for improvement.';
+          default:
+            return 'Invalid data. Please check your inputs.';
+        }
+      }
     });
-
-    function calculateScore(waterConsumed, timeSpent, consumptionType) {
-      let totalGallons = 0;
-
-      const timeToGallons = {
-        'showering': 2,
-        'washing_dishes': 3,
-        'drinking': 0,
-        'cooking': 0,
-        'cleaning': 2
-      };
-
-      if (timeSpent && timeToGallons[consumptionType]) {
-        totalGallons += timeSpent * timeToGallons[consumptionType];
-      }
-
-      if (waterConsumed) {
-        totalGallons += parseFloat(waterConsumed);
-      }
-
-      let score = 5;
-      if (totalGallons > 100) {
-        score = 1;
-      } else if (totalGallons > 75) {
-        score = 2;
-      } else if (totalGallons > 50) {
-        score = 3;
-      } else if (totalGallons > 25) {
-        score = 4;
-      }
-
-      document.getElementById('usageScore').innerText = score;
-      document.getElementById('scoreExplanation').innerText = `Your score is based on ${totalGallons.toFixed(2)} gallons of ${consumptionType} consumption.`;
-    }
   </script>
-
 </body>
 </html>
+
+
