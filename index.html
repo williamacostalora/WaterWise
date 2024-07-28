@@ -136,13 +136,16 @@
                   <label for="date">Date</label>
                   <input type="date" class="form-control" id="date" required>
                 </div>
+
                 <div class="form-group col-md-6">
                   <label for="consumptionType">Type of Consumption</label>
                   <select class="form-control" id="consumptionType">
                     <option selected>Select type</option>
                     <option value="drinking">Drinking</option>
                     <option value="showering">Showering</option>
-                    <option value="washing_dishes">Washing dishes</option>
+                    <option value="washing_cycle">Washing cycle</option>
+                    <option value="toilet_flushes">Toilet</option>
+
                   </select>
                 </div>
               </div>
@@ -150,8 +153,10 @@
                 <div class="form-group col-md-6">
                   <label for="measurementType">Measurement Type</label>
                   <select class="form-control" id="measurementType">
-                    <option value="gallons">Cups</option>
+                    <option value="cups">Cups</option>
                     <option value="minutes">Minutes</option>
+                    <option value="flushes">Flushes</option>
+
                   </select>
                 </div>
                 <div class="form-group col-md-6" id="waterInputGroup">
@@ -162,6 +167,11 @@
                   <label for="timeSpent">Total Minutes Spent</label>
                   <input type="number" class="form-control" id="timeSpent" placeholder="Enter minutes">
                 </div>
+                <div class="form-group col-md-6" id="flushesInputGroup" style="display: none;">
+                  <label for="flushesUsed">Total Flushes Used</label>
+                  <input type="number" class="form-control" id="flushesUsed" placeholder="Enter number of flushes">
+                </div>
+                
               </div>
               <button type="submit" class="btn btn-primary">Submit</button>
             </form>
@@ -333,43 +343,69 @@
     document.addEventListener('DOMContentLoaded', function () {
       var consumptionTypeSelect = document.getElementById('consumptionType');
       var measurementTypeSelect = document.getElementById('measurementType');
+
       var waterInputGroup = document.getElementById('waterInputGroup');
       var timeInputGroup = document.getElementById('timeInputGroup');
+      var flushesInputGroup = document.getElementById('flushesInputGroup');
+
       var waterConsumedLabel = document.querySelector('label[for="waterConsumed"]');
       var waterConsumedInput = document.getElementById('waterConsumed');
+
+      var timeSpentInput = document.getElementById('timeSpent');
+      var flushesUsedInput = document.getElementById('flushesUsed');
+
       var form = document.getElementById('waterIntakeForm');
+
       var usageScoreDisplay = document.getElementById('usageScore');
       var scoreExplanationDisplay = document.getElementById('scoreExplanation');
   
       consumptionTypeSelect.addEventListener('change', function () {
         if (this.value === 'drinking') {
-          measurementTypeSelect.value = 'gallons';
+          measurementTypeSelect.style.display = 'block';
+          measurementTypeSelect.value = 'cups';
+
           waterConsumedLabel.textContent = 'Total Cups Consumed';
           waterConsumedInput.placeholder = 'Enter cups';
           waterInputGroup.style.display = 'block';
           timeInputGroup.style.display = 'none';
-        } else {
+          flushesInputGroup.style.display = 'none';
+
+
+        } else if(this.value==='toilet_flushes'){
+          measurementTypeSelect.style.display = 'block';
+          measurementTypeSelect.value = 'flushes';
+
+          waterConsumedLabel.textContent = 'Total Number of Flushes';
+          flushesUsedInput.placeholder = 'Enter number of flushes';
+          waterInputGroup.style.display = 'none';
+          timeInputGroup.style.display = 'none';
+          flushesInputGroup.style.display = 'block';
+
+        }else{
+          measurementTypeSelect.style.display = 'block';
           measurementTypeSelect.value = 'minutes';
-          waterConsumedLabel.textContent = 'Total Time Spent (minutes)';
+          waterConsumedLabel.textContent = 'Total Minutes Spent';
           waterConsumedInput.placeholder = 'Enter minutes';
           waterInputGroup.style.display = 'none';
           timeInputGroup.style.display = 'block';
+          flushesInputGroup.style.display = 'none';
+
         }
       });
   
-      measurementTypeSelect.addEventListener('change', function () {
-        if (this.value === 'minutes') {
-          waterConsumedLabel.textContent = 'Total Time Spent (minutes)';
-          waterConsumedInput.placeholder = 'Enter minutes';
-          waterInputGroup.style.display = 'none';
-          timeInputGroup.style.display = 'block';
-        } else {
-          waterConsumedLabel.textContent = 'Total Cups Consumed';
-          waterConsumedInput.placeholder = 'Enter cups';
-          waterInputGroup.style.display = 'block';
-          timeInputGroup.style.display = 'none';
-        }
-      });
+      // measurementTypeSelect.addEventListener('change', function () {
+      //   if (this.value === 'minutes') {
+      //     waterConsumedLabel.textContent = 'Total Time Spent (minutes)';
+      //     waterConsumedInput.placeholder = 'Enter minutes';
+      //     waterInputGroup.style.display = 'none';
+      //     timeInputGroup.style.display = 'block';
+      //   } else {
+      //     waterConsumedLabel.textContent = 'Total Cups Consumed';
+      //     waterConsumedInput.placeholder = 'Enter cups';
+      //     waterInputGroup.style.display = 'block';
+      //     timeInputGroup.style.display = 'none';
+      //   }
+      // });
   
       form.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -377,22 +413,25 @@
         var measurementType = measurementTypeSelect.value;
         var waterConsumed = parseFloat(document.getElementById('waterConsumed').value) || 0;
         var timeSpent = parseFloat(document.getElementById('timeSpent').value) || 0;
+        var flushesUsed = parseFloat(flushesUsedInput.value) || 0;
   
-        var usageScore;
+        // var usageScore;
         var totalWaterUsed = 0;
   
-        if (measurementType === 'minutes') {
+        if (consumptionType === 'toilet_flushes') {
+          totalWaterUsed = flushesUsed * 1.6; // each flush uses 1.6 gallons
+        } else if (measurementType === 'minutes') {
           if (consumptionType === 'showering') {
             totalWaterUsed = timeSpent * 2.3;
-          } else if (consumptionType === 'washing_dishes') {
+          } else if (consumptionType === 'washing_cycle') {
             totalWaterUsed = timeSpent * 0.422;
           }
         } else {
-          totalWaterUsed = waterConsumed * 0.0625; // Convert cups to gallons
+          totalWaterUsed = waterConsumed * 0.0625; // convert cups to gallons
         }
   
-        usageScore = calculateUsageScore(consumptionType, totalWaterUsed, measurementType === 'minutes');
-        usageScoreDisplay.textContent = 'Total Water Used: ' + totalWaterUsed.toFixed(2) + ' gallons';
+        // usageScore = calculateUsageScore(consumptionType, totalWaterUsed, measurementType === 'minutes');
+        usageScoreDisplay.textContent = 'Total Water Used≈ ' + totalWaterUsed.toFixed(2) + ' gallons';
         scoreExplanationDisplay.textContent = getScoreExplanation(usageScore);
       });
   
@@ -403,7 +442,7 @@
             case 'showering':
               score = amount <= 11.5 ? 10 : amount <= 23 ? 8 : 6;
               break;
-            case 'washing_dishes':
+            case 'washing_cycle':
               score = amount <= 10.55 ? 10 : amount <= 21.1 ? 8 : 6;
               break;
             default:
@@ -417,8 +456,11 @@
             case 'showering':
               score = amount <= 10 ? 10 : amount <= 20 ? 8 : 6;
               break;
-            case 'washing_dishes':
+            case 'washing_cycle':
               score = amount <= 5 ? 10 : amount <= 10 ? 8 : 6;
+              break;
+            case 'toilet_flushes':
+              score = amount <= 1.6 * 5 ? 10 : amount <= 1.6 * 10 ? 8 : 6;
               break;
             default:
               score = 0;
@@ -430,11 +472,11 @@
       function getScoreExplanation(score) {
         switch (score) {
           case 10:
-            return 'Excellent! You are a water-saving champion.';
+            return 'Excellent! You are a water-saving champion!';
           case 8:
-            return 'Good job! You are using water wisely.';
+            return 'Good job! You are using water wisely :D';
           case 6:
-            return 'Not bad, but there is room for improvement.';
+            return 'Not bad, but there is room for improvement :)';
           default:
             return 'Invalid data. Please check your inputs.';
         }
@@ -467,3 +509,5 @@
 
 </body>
 </html>
+
+
