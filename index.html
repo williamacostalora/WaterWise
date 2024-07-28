@@ -172,6 +172,10 @@
               <h2>Your Water Usage Score in Gallons</h2>
               <p id="usageScore" class="score">Your score will appear here</p>
               <p id="scoreExplanation"></p>
+              <button id="shareScoreBtn" class="btn btn-primary mt-3">Share Your Score</button>
+              <canvas id="shareCanvas" style="display: none;"></canvas>
+              <a id="downloadLink" style="display: none;" download="waterwise-score.png">Download Image</a>
+            </div>
             </div>
           </div>
         </div>
@@ -435,6 +439,28 @@
             return 'Invalid data. Please check your inputs.';
         }
       }
+      shareScoreBtn.addEventListener('click', () => {
+        const context = shareCanvas.getContext('2d');
+        shareCanvas.width = 600;
+        shareCanvas.height = 400;
+
+        context.fillStyle = '#cce0ff';
+        context.fillRect(0, 0, shareCanvas.width, shareCanvas.height);
+
+        context.fillStyle = '#003366';
+        context.font = '24px Arial';
+        context.fillText('WaterWise Score', 20, 50);
+
+        context.font = '48px Arial';
+        context.fillText(`${usageScoreElement.textContent}`, 20, 150);
+
+        context.font = '24px Arial';
+        context.fillText(`${scoreExplanationElement.textContent}`, 20, 250);
+
+        const dataURL = shareCanvas.toDataURL('image/png');
+        downloadLink.href = dataURL;
+        downloadLink.style.display = 'block';
+      });
     });
   </script>
   
