@@ -133,15 +133,13 @@
                   <label for="date">Date</label>
                   <input type="date" class="form-control" id="date" required>
                 </div>
-                <div class="form-group col-md6">
+                <div class="form-group col-md-6">
                   <label for="consumptionType">Type of Consumption</label>
                   <select class="form-control" id="consumptionType">
                     <option selected>Select type</option>
                     <option value="drinking">Drinking</option>
-                    <!-- <option value="cooking">Cooking</option>  -->
-                    <!-- <option value="cleaning">Cleaning</option> -->
                     <option value="showering">Showering</option>
-                    <option value="washing_dishes">Washing machine</option>
+                    <option value="washing_dishes">Washing dishes</option>
                   </select>
                 </div>
               </div>
@@ -171,6 +169,12 @@
               <p id="usageScore" class="score">Your score will appear here</p>
               <p id="scoreExplanation"></p>
             </div>
+
+            <!-- AI Recommendations Display -->
+            <div class="my-5">
+              <h2>Personalized AI Recommendations</h2>
+              <ul id="aiRecommendations" class="background-box"></ul>
+            </div>
           </div>
         </div>
       </div>
@@ -199,17 +203,9 @@
       <h3>Articles on Water Conservation</h3>
       <ul class="resource-links">
         <li><a href="#">How to Save Water at Home</a></li>
+        <li><a href="#">Understanding Your Water Footprint</a></li>
+        <li><a href="#">Water-Efficient Gardening Tips</a></li>
         <li><a href="#">The Importance of Water Conservation</a></li>
-      </ul>
-      <h3>Interactive Tools</h3>
-      <ul class="resource-links">
-        <li><a href="#">Water Calculator</a></li>
-        <li><a href="#">Conservation Tips Quiz</a></li>
-      </ul>
-      <h3>External Links</h3>
-      <ul class="resource-links">
-        <li><a href="https://www.epa.gov/watersense">EPA WaterSense</a></li>
-        <li><a href="https://www.worldwildlife.org/initiatives/freshwater">WWF Water Conservation</a></li>
       </ul>
     </div>
   </section>
@@ -217,142 +213,111 @@
   <!-- Contact Section -->
   <section id="contact">
     <div class="container">
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <h2 class="section-title">Contact Us</h2>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="background-box">
-            <form>
-              <div class="form-row">
-                <div class="form-group col-md-6">
-                  <label for="name">Name</label>
-                  <input type="text" class="form-control" id="name" placeholder="Enter your name">
-                </div>
-                <div class="form-group col-md-6">
-                  <label for="email">Email</label>
-                  <input type="email" class="form-control" id="email" placeholder="Enter your email">
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="message">Message</label>
-                <textarea class="form-control" id="message" rows="5" placeholder="Enter your message"></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary">Send</button>
-            </form>
+      <h2 class="section-title text-center">Contact Us</h2>
+      <p class="text-center">Have questions or feedback? Reach out to us!</p>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Your Name">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Your Email">
           </div>
         </div>
-      </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea class="form-control" id="message" rows="5" placeholder="Your Message"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Message</button>
+      </form>
     </div>
   </section>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var measurementTypeSelect = document.getElementById('measurementType');
-      var waterInputGroup = document.getElementById('waterInputGroup');
-      var timeInputGroup = document.getElementById('timeInputGroup');
-      var form = document.getElementById('waterIntakeForm');
-      var usageScoreDisplay = document.getElementById('usageScore');
-      var scoreExplanationDisplay = document.getElementById('scoreExplanation');
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById("waterIntakeForm");
+      const consumptionType = document.getElementById("consumptionType");
+      const measurementType = document.getElementById("measurementType");
+      const waterInputGroup = document.getElementById("waterInputGroup");
+      const timeInputGroup = document.getElementById("timeInputGroup");
+      const waterConsumed = document.getElementById("waterConsumed");
+      const timeSpent = document.getElementById("timeSpent");
+      const usageScore = document.getElementById("usageScore");
+      const scoreExplanation = document.getElementById("scoreExplanation");
+      const aiRecommendations = document.getElementById("aiRecommendations");
 
-      measurementTypeSelect.addEventListener('change', function () {
-        if (this.value === 'minutes') {
-          waterInputGroup.style.display = 'none';
-          timeInputGroup.style.display = 'block';
+      consumptionType.addEventListener("change", function() {
+        const selectedType = consumptionType.value;
+        if (selectedType === "showering") {
+          measurementType.innerHTML = `
+            <option value="minutes">Minutes</option>
+            <option value="gallons">Gallons</option>
+          `;
+          waterInputGroup.style.display = "none";
+          timeInputGroup.style.display = "block";
         } else {
-          waterInputGroup.style.display = 'block';
-          timeInputGroup.style.display = 'none';
+          measurementType.innerHTML = `
+            <option value="gallons">Cups</option>
+            <option value="liters">Liters</option>
+          `;
+          waterInputGroup.style.display = "block";
+          timeInputGroup.style.display = "none";
         }
       });
 
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var consumptionType = document.getElementById('consumptionType').value;
-        var measurementType = measurementTypeSelect.value;
-        var waterConsumed = document.getElementById('waterConsumed').value;
-        var timeSpent = document.getElementById('timeSpent').value;
+      form.addEventListener("submit", function(event) {
+        event.preventDefault();
 
-        var usageScore;
-        var totalWaterUsed =0;
-        if(measurementType==='minutes'){
-          if (consumptionType==='showering'){
-            totalWaterUsed=timeSpent*2.3;
-          } else if(consumptionType=== 'washing_dishes'){
-            totalWaterUsed=timeSpent*0.422;
-          }
-          usageScore=calculateUsageScore(consumptionType,totalWaterUsed,true);
-        } else{
-          totalWaterUsed=waterConsumed;
-          usageScore=calculateUsageScore(consumptionType,waterConsumed);
-        }
+        const date = document.getElementById("date").value;
+        const consumptionTypeValue = consumptionType.value;
+        const measurementTypeValue = measurementType.value;
+        const waterConsumedValue = parseFloat(waterConsumed.value) || 0;
+        const timeSpentValue = parseFloat(timeSpent.value) || 0;
+        
+        let totalGallons = 0;
 
-        usageScoreDisplay.textContent='Total Water Used: ' + totalWaterUsed.toFixed(2)+' gallons';
-        scoreExplanationDisplay.textContent=getScoreExplanation(usageScore);
-
-      //   if (measurementType === 'gallons') {
-      //     usageScore = calculateUsageScore(consumptionType, waterConsumed);
-      //   } else {
-      //     usageScore = calculateUsageScore(consumptionType, timeSpent, true);
-      //   }
-
-      //   usageScoreDisplay.textContent = usageScore;
-      //   scoreExplanationDisplay.textContent = getScoreExplanation(usageScore);
-      });
-
-      function calculateUsageScore(type, amount, isTime = false) {
-        var score;
-        if (isTime) {
-          switch (type) {
-            case 'showering':
-              score = amount <= 5 ? 10 : amount <= 10 ? 8 : 6;
-              break;
-            case 'washing_dishes':
-              score = amount <= 10 ? 10 : amount <= 20 ? 8 : 6;
-              break;
-            default:
-              score = 0;
+        if (consumptionTypeValue === "showering") {
+          if (measurementTypeValue === "minutes") {
+            totalGallons = timeSpentValue * 2.1; // Average water usage per minute
+          } else {
+            totalGallons = timeSpentValue;
           }
         } else {
-          switch (type) {
-            case 'drinking':
-              score = amount <= 1 ? 10 : amount <= 2 ? 8 : 6;
-              break;
-            // case 'cooking':
-            //   score = amount <= 2 ? 10 : amount <= 4 ? 8 : 6;
-            //   break;
-            // case 'cleaning':
-            //   score = amount <= 3 ? 10 : amount <= 5 ? 8 : 6;
-            //   break;
-            case 'showering':
-              score = amount <= 10 ? 10 : amount <= 20 ? 8 : 6;
-              break;
-            case 'washing_dishes':
-              score = amount <= 5 ? 10 : amount <= 10 ? 8 : 6;
-              break;
-            default:
-              score = 0;
+          if (measurementTypeValue === "gallons") {
+            totalGallons = waterConsumedValue * 0.0625; // Convert cups to gallons
+          } else {
+            totalGallons = waterConsumedValue * 0.264172; // Convert liters to gallons
           }
         }
-        return score;
-      }
 
-      function getScoreExplanation(score) {
-        switch (score) {
-          case 10:
-            return 'Excellent! You are a water-saving champion.';
-          case 8:
-            return 'Good job! You are using water wisely.';
-          case 6:
-            return 'Not bad, but there is room for improvement.';
-          default:
-            return 'Invalid data. Please check your inputs.';
-        }
-      }
+        const score = 100 - totalGallons; // Placeholder scoring logic
+        usageScore.innerHTML = `${score.toFixed(2)}`;
+        scoreExplanation.innerHTML = `Based on your water consumption, you used ${totalGallons.toFixed(2)} gallons.`;
+
+        // Fetch AI recommendations from Flask backend
+        fetch('http://127.0.0.1:5000/get-recommendations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ totalGallons })
+        })
+        .then(response => response.json())
+        .then(data => {
+          aiRecommendations.innerHTML = '';
+          data.recommendations.forEach(rec => {
+            const li = document.createElement('li');
+            li.textContent = rec;
+            aiRecommendations.appendChild(li);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching AI recommendations:', error);
+        });
+      });
     });
   </script>
 </body>
 </html>
-
-
