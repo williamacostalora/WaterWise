@@ -142,9 +142,11 @@
                   <select class="form-control" id="consumptionType">
                     <option selected>Select type</option>
                     <option value="drinking">Drinking</option>
-                    <option value="showering">Showering</option>
-                    <option value="washing_cycle">Washing cycle</option>
+                    <option value="showering">Shower</option>
+                    <option value="washing_cycle">Washing Machine</option>
                     <option value="toilet_flushes">Toilet</option>
+                    <option value="bathing">Bath</option>
+                    <option value="dishes">Dishwasher</option>
                   </select>
                 </div>
               </div>
@@ -171,6 +173,7 @@
                 </div>
               </div>
               <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="button" id="resetButton" class="btn btn-secondary">Reset</button>
             </form>
 
             <!-- Water Usage Score Display -->
@@ -330,132 +333,162 @@
   </script>
 
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var consumptionTypeSelect = document.getElementById('consumptionType');
-      var measurementTypeSelect = document.getElementById('measurementType');
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var consumptionTypeSelect = document.getElementById('consumptionType');
+    var measurementTypeSelect = document.getElementById('measurementType');
 
-      var waterInputGroup = document.getElementById('waterInputGroup');
-      var timeInputGroup = document.getElementById('timeInputGroup');
-      var flushesInputGroup = document.getElementById('flushesInputGroup');
+    var waterInputGroup = document.getElementById('waterInputGroup');
+    var timeInputGroup = document.getElementById('timeInputGroup');
+    var flushesInputGroup = document.getElementById('flushesInputGroup');
 
-      var waterConsumedLabel = document.querySelector('label[for="waterConsumed"]');
-      var waterConsumedInput = document.getElementById('waterConsumed');
+    var waterConsumedLabel = document.querySelector('label[for="waterConsumed"]');
+    var waterConsumedInput = document.getElementById('waterConsumed');
 
-      var timeSpentInput = document.getElementById('timeSpent');
-      var flushesUsedInput = document.getElementById('flushesUsed');
+    var timeSpentInput = document.getElementById('timeSpent');
+    var flushesUsedInput = document.getElementById('flushesUsed');
 
-      var form = document.getElementById('waterIntakeForm');
+    var form = document.getElementById('waterIntakeForm');
 
-      var usageScoreDisplay = document.getElementById('usageScore');
-      var scoreExplanationDisplay = document.getElementById('scoreExplanation');
-  
-      consumptionTypeSelect.addEventListener('change', function () {
-        if (this.value === 'drinking') {
-          measurementTypeSelect.style.display = 'block';
-          measurementTypeSelect.value = 'cups';
+    var usageScoreDisplay = document.getElementById('usageScore');
+    var scoreExplanationDisplay = document.getElementById('scoreExplanation');
 
-          waterConsumedLabel.textContent = 'Total Cups Consumed';
-          waterConsumedInput.placeholder = 'Enter cups';
-          waterInputGroup.style.display = 'block';
-          timeInputGroup.style.display = 'none';
-          flushesInputGroup.style.display = 'none';
+    // Retrieve the total score from localStorage or initialize it to 0
+    var totalWaterUsed = parseFloat(localStorage.getItem('totalWaterUsed')) || 0;
 
-        } else if(this.value === 'toilet_flushes'){
-          measurementTypeSelect.style.display = 'block';
-          measurementTypeSelect.value = 'flushes';
+    // Display the initial cumulative score
+    usageScoreDisplay.textContent = 'Total Water Used ≈ ' + totalWaterUsed.toFixed(2) + ' gallons';
 
-          waterConsumedLabel.textContent = 'Total Number of Flushes';
-          flushesUsedInput.placeholder = 'Enter number of flushes';
-          waterInputGroup.style.display = 'none';
-          timeInputGroup.style.display = 'none';
-          flushesInputGroup.style.display = 'block';
+    consumptionTypeSelect.addEventListener('change', function () {
+      if (this.value === 'drinking') {
+        measurementTypeSelect.style.display = 'block';
+        measurementTypeSelect.value = 'cups';
 
-        } else {
-          measurementTypeSelect.style.display = 'block';
-          measurementTypeSelect.value = 'minutes';
+        waterConsumedLabel.textContent = 'Total Cups Consumed';
+        waterConsumedInput.placeholder = 'Enter cups';
+        waterInputGroup.style.display = 'block';
+        timeInputGroup.style.display = 'none';
+        flushesInputGroup.style.display = 'none';
 
-          waterConsumedLabel.textContent = 'Total Minutes Spent';
-          waterConsumedInput.placeholder = 'Enter minutes';
-          waterInputGroup.style.display = 'none';
-          timeInputGroup.style.display = 'block';
-          flushesInputGroup.style.display = 'none';
+      } else if(this.value === 'toilet_flushes'){
+        measurementTypeSelect.style.display = 'block';
+        measurementTypeSelect.value = 'flushes';
+
+        waterConsumedLabel.textContent = 'Total Number of Flushes';
+        flushesUsedInput.placeholder = 'Enter number of flushes';
+        waterInputGroup.style.display = 'none';
+        timeInputGroup.style.display = 'none';
+        flushesInputGroup.style.display = 'block';
+
+      } else {
+        measurementTypeSelect.style.display = 'block';
+        measurementTypeSelect.value = 'minutes';
+
+        waterConsumedLabel.textContent = 'Total Minutes Spent';
+        waterConsumedInput.placeholder = 'Enter minutes';
+        waterInputGroup.style.display = 'none';
+        timeInputGroup.style.display = 'block';
+        flushesInputGroup.style.display = 'none';
+      }
+    });
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var consumptionType = consumptionTypeSelect.value;
+      var measurementType = measurementTypeSelect.value;
+      var waterConsumed = parseFloat(document.getElementById('waterConsumed').value) || 0;
+      var timeSpent = parseFloat(document.getElementById('timeSpent').value) || 0;
+      var flushesUsed = parseFloat(flushesUsedInput.value) || 0;
+
+      var currentWaterUsed = 0;
+
+      if (consumptionType === 'toilet_flushes') {
+        currentWaterUsed = flushesUsed * 1.6; // each flush uses 1.6 gallons
+      } else if (measurementType === 'minutes') {
+        if (consumptionType === 'showering') {
+          currentWaterUsed = timeSpent * 2.3; // each minute of showering uses 2.3 gallons
+        } else if (consumptionType === 'washing_cycle') {
+          currentWaterUsed = timeSpent * 0.3 // each minute of washing cycle uses 0.3 gallons
+        } else if (consumptionType === 'bathing') {
+          currentWaterUsed = 40; 
+        } else if (consumptionType === 'dishes') {
+          currentWaterUsed = 5; // each cycle of washing dishes uses around 5 gallons
+
         }
-      });
-  
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        var consumptionType = consumptionTypeSelect.value;
-        var measurementType = measurementTypeSelect.value;
-        var waterConsumed = parseFloat(document.getElementById('waterConsumed').value) || 0;
-        var timeSpent = parseFloat(document.getElementById('timeSpent').value) || 0;
-        var flushesUsed = parseFloat(flushesUsedInput.value) || 0;
-  
-        var totalWaterUsed = 0;
-  
-        if (consumptionType === 'toilet_flushes') {
-          totalWaterUsed = flushesUsed * 1.6; // each flush uses 1.6 gallons
-        } else if (measurementType === 'minutes') {
-          if (consumptionType === 'showering') {
-            totalWaterUsed = timeSpent * 2.3; // each minute of showering uses 2.3 gallons
-          } else if (consumptionType === 'washing_cycle') {
-            totalWaterUsed = timeSpent * 0.422; // each minute of washing cycle uses 0.422 gallons
-          }
-        } else {
-          totalWaterUsed = waterConsumed * 0.0625; // convert cups to gallons
+      } else {
+        currentWaterUsed = waterConsumed * 0.0625; // convert cups to gallons
+      }
+
+      // Update the total water used
+      totalWaterUsed += currentWaterUsed;
+
+      // Save the updated total water used to localStorage
+      localStorage.setItem('totalWaterUsed', totalWaterUsed);
+
+      // Calculate usage score
+      // var usageScore = calculateUsageScore(consumptionType, currentWaterUsed, measurementType === 'minutes');
+      
+      // Update the display
+      usageScoreDisplay.textContent = 'Total Water Used ≈ ' + totalWaterUsed.toFixed(2) + ' gallons';
+      scoreExplanationDisplay.textContent = getScoreExplanation(totalWaterUsed);
+      
+      // Reset form
+      form.reset();
+    });
+
+    function calculateUsageScore(type, amount, isTime = false) {
+      var score;
+      if (isTime) {
+        switch (type) {
+          case 'showering':
+          case 'washing_cycle':
+            score = amount <= 30 ? 10 : amount <= 50 ? 8 : amount <= 70 ? 6 : 4;
+            break;
+          default:
+            score = 0;
         }
-  
-        var usageScore = calculateUsageScore(consumptionType, totalWaterUsed, measurementType === 'minutes');
-        usageScoreDisplay.textContent = 'Total Water Used ≈ ' + totalWaterUsed.toFixed(2) + ' gallons';
-        scoreExplanationDisplay.textContent = getScoreExplanation(usageScore);
-      });
-  
-      function calculateUsageScore(type, amount, isTime = false) {
-        var score;
-        if (isTime) {
-            switch (type) {
-                case 'showering':
-                    score = amount <= 30 ? 10 : amount <= 50 ? 8 : amount <= 70 ? 6 : 4;
-                    break;
-                case 'washing_cycle':
-                    score = amount <= 30 ? 10 : amount <= 50 ? 8 : amount <= 70 ? 6 : 4;
-                    break;
-                default:
-                    score = 0;
-            }
-        } else {
-            switch (type) {
-                case 'drinking':
-                    score = amount <= 30 ? 10 : amount <= 50 ? 8 : amount <= 70 ? 6 : 4;
-                    break;
-                case 'toilet_flushes':
-                    score = amount <= 30 ? 10 : amount <= 50 ? 8 : amount <= 70 ? 6 : 4;
-                    break;
-                default:
-                    score = 0;
-            }
+      } else {
+        switch (type) {
+          case 'drinking':
+          case 'toilet_flushes':
+            score = amount <= 30 ? 10 : amount <= 50 ? 8 : amount <= 70 ? 6 : 4;
+            break;
+          default:
+            score = 0;
         }
-        return score;
+      }
+      return score;
     }
 
-  
-      function getScoreExplanation(score) {
-        switch (score) {
-            case 10:
-                return 'Excellent! You are a water-saving champion!';
-            case 8:
-                return 'Good job! You are using water wisely :D';
-            case 6:
-                return 'Not bad, but there is room for improvement :)';
-            case 4:
-                return "Let's try conserving more water!";
-            default:
-                return 'Invalid data. Please check your inputs.';
-        }
-      }   
+    // Reset all the inputs
 
+    resetButton.addEventListener('click', function () {
+      // Reset the total water used
+      totalWaterUsed = 0;
+      localStorage.setItem('totalWaterUsed', totalWaterUsed);
+
+      // Update the display
+      usageScoreDisplay.textContent = 'Total Water Used ≈ 0 gallons';
+      scoreExplanationDisplay.textContent = '';
+
+      // Reset form
+      form.reset();
     });
-  </script>
+
+    function getScoreExplanation(totalWaterUsed) {
+      if (totalWaterUsed < 60) {
+        return 'Excellent! You are a water-saving champion!';
+      } else if (totalWaterUsed >= 60 && totalWaterUsed < 80) {
+        return 'Good job! You are using water wisely :D';
+      } else if (totalWaterUsed >= 80 && totalWaterUsed < 100) {
+        return 'Not bad, but there is room for improvement :)';
+      } else {
+        return "Let's try conserving more water!";
+      }
+    }
+  });
+</script>
+
   
 </body>
 </html>
