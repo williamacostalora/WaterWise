@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Georgia', sans-serif;
       padding-top: 56px;
       background-color: #f0f8ff;
       color: #333;
@@ -138,10 +138,10 @@
                   <select class="form-control" id="consumptionType">
                     <option selected>Select type</option>
                     <option value="drinking">Drinking</option>
-                    <option value="cooking">Cooking</option>
-                    <option value="cleaning">Cleaning</option>
+                    <!-- <option value="cooking">Cooking</option>  -->
+                    <!-- <option value="cleaning">Cleaning</option> -->
                     <option value="showering">Showering</option>
-                    <option value="washing_dishes">Washing Dishes</option>
+                    <option value="washing_dishes">Washing machine</option>
                   </select>
                 </div>
               </div>
@@ -149,13 +149,13 @@
                 <div class="form-group col-md-6">
                   <label for="measurementType">Measurement Type</label>
                   <select class="form-control" id="measurementType">
-                    <option value="gallons">Gallons</option>
+                    <option value="gallons">Cups</option>
                     <option value="minutes">Minutes</option>
                   </select>
                 </div>
                 <div class="form-group col-md-6" id="waterInputGroup">
-                  <label for="waterConsumed">Total Water Consumed (gallons)</label>
-                  <input type="number" class="form-control" id="waterConsumed" placeholder="Enter gallons">
+                  <label for="waterConsumed">Total Water Consumed (cups)</label>
+                  <input type="number" class="form-control" id="waterConsumed" placeholder="Enter cups">
                 </div>
                 <div class="form-group col-md-6" id="timeInputGroup" style="display: none;">
                   <label for="timeSpent">Time Spent (minutes)</label>
