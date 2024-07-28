@@ -133,15 +133,13 @@
                   <label for="date">Date</label>
                   <input type="date" class="form-control" id="date" required>
                 </div>
-                <div class="form-group col-md6">
+                <div class="form-group col-md-6">
                   <label for="consumptionType">Type of Consumption</label>
                   <select class="form-control" id="consumptionType">
                     <option selected>Select type</option>
                     <option value="drinking">Drinking</option>
-                    <!-- <option value="cooking">Cooking</option>  -->
-                    <!-- <option value="cleaning">Cleaning</option> -->
                     <option value="showering">Showering</option>
-                    <option value="washing_dishes">Washing machine</option>
+                    <option value="washing_dishes">Washing dishes</option>
                   </select>
                 </div>
               </div>
@@ -175,7 +173,7 @@
             <!-- AI Recommendations Display -->
             <div class="my-5">
               <h2>Personalized AI Recommendations</h2>
-              <p id="aiRecommendations" class="background-box">Your recommendations will appear here</p>
+              <ul id="aiRecommendations" class="background-box"></ul>
             </div>
           </div>
         </div>
@@ -206,8 +204,8 @@
       <ul class="resource-links">
         <li><a href="#">How to Save Water at Home</a></li>
         <li><a href="#">Understanding Your Water Footprint</a></li>
-        <li><a href="#">Water-Saving Tips for the Kitchen</a></li>
-        <li><a href="#">Eco-Friendly Water Usage</a></li>
+        <li><a href="#">Water-Efficient Gardening Tips</a></li>
+        <li><a href="#">The Importance of Water Conservation</a></li>
       </ul>
     </div>
   </section>
@@ -216,114 +214,109 @@
   <section id="contact">
     <div class="container">
       <h2 class="section-title text-center">Contact Us</h2>
-      <div class="row justify-content-center">
-        <div class="col-md-8">
-          <div class="background-box">
-            <h3>We'd Love to Hear from You!</h3>
-            <form id="contactForm">
-              <div class="form-group">
-                <label for="name">Name</label>
-                <input type="text" class="form-control" id="name" required>
-              </div>
-              <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" required>
-              </div>
-              <div class="form-group">
-                <label for="message">Message</label>
-                <textarea class="form-control" id="message" rows="5" required></textarea>
-              </div>
-              <button type="submit" class="btn btn-primary">Send Message</button>
-            </form>
-            <div id="contactSuccessMessage" class="alert alert-success mt-4" style="display: none;">
-              Your message has been sent successfully!
-            </div>
+      <p class="text-center">Have questions or feedback? Reach out to us!</p>
+      <form>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="name">Name</label>
+            <input type="text" class="form-control" id="name" placeholder="Your Name">
+          </div>
+          <div class="form-group col-md-6">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Your Email">
           </div>
         </div>
-      </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea class="form-control" id="message" rows="5" placeholder="Your Message"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Send Message</button>
+      </form>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="text-center py-3">
-    <div class="container">
-      <p>&copy; 2024 WaterWise. All rights reserved.</p>
-    </div>
-  </footer>
-
   <script>
-    // Show/hide input fields based on selected measurement type
-    document.getElementById("measurementType").addEventListener("change", function() {
-      const measurementType = this.value;
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById("waterIntakeForm");
+      const consumptionType = document.getElementById("consumptionType");
+      const measurementType = document.getElementById("measurementType");
       const waterInputGroup = document.getElementById("waterInputGroup");
       const timeInputGroup = document.getElementById("timeInputGroup");
+      const waterConsumed = document.getElementById("waterConsumed");
+      const timeSpent = document.getElementById("timeSpent");
+      const usageScore = document.getElementById("usageScore");
+      const scoreExplanation = document.getElementById("scoreExplanation");
+      const aiRecommendations = document.getElementById("aiRecommendations");
 
-      if (measurementType === "gallons") {
-        waterInputGroup.style.display = "block";
-        timeInputGroup.style.display = "none";
-      } else if (measurementType === "minutes") {
-        waterInputGroup.style.display = "none";
-        timeInputGroup.style.display = "block";
-      }
-    });
-
-    // Handle form submission
-    document.getElementById("waterIntakeForm").addEventListener("submit", function(event) {
-      event.preventDefault();
-
-      const date = document.getElementById("date").value;
-      const consumptionType = document.getElementById("consumptionType").value;
-      const measurementType = document.getElementById("measurementType").value;
-      const waterConsumed = document.getElementById("waterConsumed").value;
-      const timeSpent = document.getElementById("timeSpent").value;
-
-      let totalGallons;
-      if (measurementType === "gallons") {
-        totalGallons = parseFloat(waterConsumed);
-      } else if (measurementType === "minutes") {
-        const waterFlowRate = 2.5;
-        totalGallons = (parseFloat(timeSpent) * waterFlowRate).toFixed(2);
-      }
-
-      const usageScore = (totalGallons * 10).toFixed(2);
-      document.getElementById("usageScore").textContent = usageScore;
-      document.getElementById("scoreExplanation").textContent = `You consumed ${totalGallons} gallons of water. Your score is calculated based on your total water consumption.`;
-
-      // Mock API call for AI recommendations
-      fetch("https://mock-api-for-recommendations.com", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          date,
-          consumptionType,
-          totalGallons,
-        }),
-      })
-      .then((response) => response.json())
-      .then((data) => {
-        const recommendations = data.recommendations;
-        document.getElementById("aiRecommendations").textContent = recommendations.join(" ");
-      })
-      .catch((error) => {
-        console.error("Error fetching AI recommendations:", error);
+      consumptionType.addEventListener("change", function() {
+        const selectedType = consumptionType.value;
+        if (selectedType === "showering") {
+          measurementType.innerHTML = `
+            <option value="minutes">Minutes</option>
+            <option value="gallons">Gallons</option>
+          `;
+          waterInputGroup.style.display = "none";
+          timeInputGroup.style.display = "block";
+        } else {
+          measurementType.innerHTML = `
+            <option value="gallons">Cups</option>
+            <option value="liters">Liters</option>
+          `;
+          waterInputGroup.style.display = "block";
+          timeInputGroup.style.display = "none";
+        }
       });
-    });
 
-    // Handle contact form submission
-    document.getElementById("contactForm").addEventListener("submit", function(event) {
-      event.preventDefault();
+      form.addEventListener("submit", function(event) {
+        event.preventDefault();
 
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const message = document.getElementById("message").value;
+        const date = document.getElementById("date").value;
+        const consumptionTypeValue = consumptionType.value;
+        const measurementTypeValue = measurementType.value;
+        const waterConsumedValue = parseFloat(waterConsumed.value) || 0;
+        const timeSpentValue = parseFloat(timeSpent.value) || 0;
+        
+        let totalGallons = 0;
 
-      // Mock sending contact form data
-      setTimeout(() => {
-        document.getElementById("contactSuccessMessage").style.display = "block";
-        document.getElementById("contactForm").reset();
-      }, 1000);
+        if (consumptionTypeValue === "showering") {
+          if (measurementTypeValue === "minutes") {
+            totalGallons = timeSpentValue * 2.1; // Average water usage per minute
+          } else {
+            totalGallons = timeSpentValue;
+          }
+        } else {
+          if (measurementTypeValue === "gallons") {
+            totalGallons = waterConsumedValue * 0.0625; // Convert cups to gallons
+          } else {
+            totalGallons = waterConsumedValue * 0.264172; // Convert liters to gallons
+          }
+        }
+
+        const score = 100 - totalGallons; // Placeholder scoring logic
+        usageScore.innerHTML = `${score.toFixed(2)}`;
+        scoreExplanation.innerHTML = `Based on your water consumption, you used ${totalGallons.toFixed(2)} gallons.`;
+
+        // Fetch AI recommendations from Flask backend
+        fetch('http://127.0.0.1:5000/get-recommendations', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ totalGallons })
+        })
+        .then(response => response.json())
+        .then(data => {
+          aiRecommendations.innerHTML = '';
+          data.recommendations.forEach(rec => {
+            const li = document.createElement('li');
+            li.textContent = rec;
+            aiRecommendations.appendChild(li);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching AI recommendations:', error);
+        });
+      });
     });
   </script>
 </body>
